@@ -7,5 +7,8 @@ namespace ASPproj.Models
         [Key]
         public string Id { set; get; }
         public string Customr_Id {  get; set; }
+
+        [ForeignKey("ID")]
+        public Customer customer { get; set; }
     }
 }
