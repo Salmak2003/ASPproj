@@ -1,0 +1,72 @@
+﻿@model IEnumerable<ASPproj.Models.Item>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Items</h1>
+
+<!-- Search and Sort Form -->
+<form method="get">
+    <div>
+        <label for="searchName">Search by Name:</label>
+        <input type="text" id="searchName" name="searchName" value="@ViewData["SearchName"]" />
+    </div>
+    <div>
+        <label for="sortOrder">Sort by Price:</label>
+        <select name="sortOrder" id="sortOrder">
+            <option value="">Default</option>
+            <option value="price_asc" @(ViewData["SortOrder"]?.ToString() == "price_asc" ? "selected" : "")>Price Ascending</option>
+            <option value="price_desc" @(ViewData["SortOrder"]?.ToString() == "price_desc" ? "selected" : "")>Price Descending</option>
+        </select>
+    </div>
+    <button type="submit">Search</button>
+</form>
+
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<!-- Display Items Table -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.stock_quantity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.stock_quantity)
+                </td>
+                <td>
+                    <form asp-action="AddToCart" method="post">
+                        <input type="hidden" name="itemId" value="@item.Item_Id" />
+                        <input type="number" name="quantity" value="1" min="1" max="@item.stock_quantity" />
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+
+</table>
