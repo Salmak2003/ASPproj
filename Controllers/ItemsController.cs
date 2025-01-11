@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using ASPproj.Data;
 using ASPproj.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASPproj.Controllers
 {
+    [Authorize]
     public class ItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,13 +19,47 @@ namespace ASPproj.Controllers
             _context = context;
         }
 
-        // GET: Items
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            return View(await _context.item.ToListAsync());
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+            ViewData["StockSortParm"] = sortOrder == "Stock" ? "stock_desc" : "Stock";
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var items = from i in _context.Items select i;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                items = items.Where(s => s.Name.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    items = items.OrderByDescending(s => s.Name);
+                    break;
+                case "Price":
+                    items = items.OrderBy(s => s.Price);
+                    break;
+                case "price_desc":
+                    items = items.OrderByDescending(s => s.Price);
+                    break;
+                case "Stock":
+                    items = items.OrderBy(s => s.StockQuantity);
+                    break;
+                case "stock_desc":
+                    items = items.OrderByDescending(s => s.StockQuantity);
+                    break;
+                default:
+                    items = items.OrderBy(s => s.Name);
+                    break;
+            }
+
+            return View(await items.AsNoTracking().ToListAsync());
         }
 
-        // GET: Items/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -33,8 +67,7 @@ namespace ASPproj.Controllers
                 return NotFound();
             }
 
-            var item = await _context.item
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var item = await _context.Items.FirstOrDefaultAsync(m => m.Id == id);
             if (item == null)
             {
                 return NotFound();
@@ -43,18 +76,14 @@ namespace ASPproj.Controllers
             return View(item);
         }
 
-        // GET: Items/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Items/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,stock_quantity")] Item item)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,StockQuantity")] Item item)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +94,6 @@ namespace ASPproj.Controllers
             return View(item);
         }
 
-        // GET: Items/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -73,7 +101,7 @@ namespace ASPproj.Controllers
                 return NotFound();
             }
 
-            var item = await _context.item.FindAsync(id);
+            var item = await _context.Items.FindAsync(id);
             if (item == null)
             {
                 return NotFound();
@@ -81,12 +109,12 @@ namespace ASPproj.Controllers
             return View(item);
         }
 
-        // POST: Items/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Price,stock_quantity")] Item item)
+        public async Task<IActionResult> Edit(
+            string id,
+            [Bind("Id,Name,Price,StockQuantity")] Item item
+        )
         {
             if (id != item.Id)
             {
@@ -116,7 +144,6 @@ namespace ASPproj.Controllers
             return View(item);
         }
 
-        // GET: Items/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -124,8 +151,7 @@ namespace ASPproj.Controllers
                 return NotFound();
             }
 
-            var item = await _context.item
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var item = await _context.Items.FirstOrDefaultAsync(m => m.Id == id);
             if (item == null)
             {
                 return NotFound();
@@ -134,15 +160,14 @@ namespace ASPproj.Controllers
             return View(item);
         }
 
-        // POST: Items/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var item = await _context.item.FindAsync(id);
+            var item = await _context.Items.FindAsync(id);
             if (item != null)
             {
-                _context.item.Remove(item);
+                _context.Items.Remove(item);
             }
 
             await _context.SaveChangesAsync();
@@ -151,7 +176,7 @@ namespace ASPproj.Controllers
 
         private bool ItemExists(string id)
         {
-            return _context.item.Any(e => e.Id == id);
+            return _context.Items.Any(e => e.Id == id);
         }
     }
 }

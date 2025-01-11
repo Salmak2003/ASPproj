@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/hamzeh/Desktop/ASP.New/ASPproj/ASPproj.csproj": {}
+    "/home/omar/asp_proj/ASPproj/ASPproj.csproj": {}
   },
   "projects": {
-    "/home/hamzeh/Desktop/ASP.New/ASPproj/ASPproj.csproj": {
+    "/home/omar/asp_proj/ASPproj/ASPproj.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/hamzeh/Desktop/ASP.New/ASPproj/ASPproj.csproj",
+        "projectUniqueName": "/home/omar/asp_proj/ASPproj/ASPproj.csproj",
         "projectName": "ASPproj",
-        "projectPath": "/home/hamzeh/Desktop/ASP.New/ASPproj/ASPproj.csproj",
-        "packagesPath": "/home/hamzeh/.nuget/packages/",
-        "outputPath": "/home/hamzeh/Desktop/ASP.New/ASPproj/obj/",
+        "projectPath": "/home/omar/asp_proj/ASPproj/ASPproj.csproj",
+        "packagesPath": "/home/omar/.nuget/packages/",
+        "outputPath": "/home/omar/asp_proj/ASPproj/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/hamzeh/.nuget/NuGet/NuGet.Config"
+          "/home/omar/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,13 +32,31 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "JetBrains.Annotations": {
+              "target": "Package",
+              "version": "[2024.3.0, )"
+            },
             "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
               "target": "Package",
               "version": "[8.0.11, )"
             },
@@ -76,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.110/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

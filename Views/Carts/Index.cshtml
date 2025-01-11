@@ -1,36 +1,43 @@
-﻿@model IEnumerable<ASPproj.Models.Cart>
+﻿@model ASPproj.Models.Cart
 
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Customr_Id)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customr_Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container mt-5">
+    <h1 class="text-center">Your Cart</h1>
+    <div class="mt-4">
+        @if (ViewData["Message"] != null)
+        {
+            <div class="alert alert-info">
+                @ViewData["Message"]
+            </div>
+        }
+        else
+        {
+            <table class="table table-striped table-bordered">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col">Item Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cartItem in Model.CartItems)
+                    {
+                        <tr>
+                            <td>@cartItem.item.Name</td>
+                            <td>@string.Format("{0:C}", cartItem.item.Price)</td>
+                            <td>@cartItem.Quantity</td>
+                            <td>@string.Format("{0:C}", cartItem.item.Price * cartItem.Quantity)</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="3" class="text-end">Total</th>
+                        <th>@string.Format("{0:C}", Model.CartItems.Sum(ci => ci.item.Price * ci.Quantity))</th>
+                    </tr>
+                </tfoot>
+            </table>
+        }
+    </div>
+</div>

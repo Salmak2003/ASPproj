@@ -26,13 +26,15 @@ namespace ASPproj.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Customr_Id")
+                    b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("cart");
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("ASPproj.Models.Cart_item", b =>
@@ -42,18 +44,27 @@ namespace ASPproj.Migrations
 
                     b.Property<string>("Cart_Id")
                         .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Item_Id")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Quantity");
 
                     b.HasKey("Id");
 
-                    b.ToTable("cart_item");
+                    b.HasIndex("Cart_Id");
+
+                    b.HasIndex("Item_Id");
+
+                    b.ToTable("Cart_Items");
                 });
 
             modelBuilder.Entity("ASPproj.Models.Customer", b =>
@@ -63,19 +74,34 @@ namespace ASPproj.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Email");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Name");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Password");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("Username");
 
                     b.HasKey("ID");
 
-                    b.ToTable("customer");
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("ASPproj.Models.Item", b =>
@@ -85,17 +111,58 @@ namespace ASPproj.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Name");
 
                     b.Property<int>("Price")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Price");
 
-                    b.Property<int>("stock_quantity")
-                        .HasColumnType("int");
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("int")
+                        .HasColumnName("stock_quantity");
 
                     b.HasKey("Id");
 
-                    b.ToTable("item");
+                    b.ToTable("Items");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Laptop",
+                            Price = 1200,
+                            StockQuantity = 50
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "Smartphone",
+                            Price = 800,
+                            StockQuantity = 150
+                        },
+                        new
+                        {
+                            Id = "3",
+                            Name = "Headphones",
+                            Price = 150,
+                            StockQuantity = 200
+                        },
+                        new
+                        {
+                            Id = "4",
+                            Name = "Monitor",
+                            Price = 300,
+                            StockQuantity = 80
+                        },
+                        new
+                        {
+                            Id = "5",
+                            Name = "Keyboard",
+                            Price = 70,
+                            StockQuantity = 120
+                        });
                 });
 
             modelBuilder.Entity("ASPproj.Models.Order", b =>
@@ -103,20 +170,25 @@ namespace ASPproj.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Customer_Id")
+                    b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Status");
 
-                    b.Property<double>("total_price")
-                        .HasColumnType("float");
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("Total_Price");
 
                     b.HasKey("Id");
 
-                    b.ToTable("order");
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ASPproj.Models.Order_item", b =>
@@ -126,18 +198,88 @@ namespace ASPproj.Migrations
 
                     b.Property<string>("Item_Id")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Order_Id")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Quantity");
 
                     b.HasKey("Id");
 
-                    b.ToTable("order_item");
+                    b.HasIndex("Item_Id");
+
+                    b.HasIndex("Order_Id");
+
+                    b.ToTable("Order_Items");
+                });
+
+            modelBuilder.Entity("ASPproj.Models.Cart", b =>
+                {
+                    b.HasOne("ASPproj.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("ASPproj.Models.Cart_item", b =>
+                {
+                    b.HasOne("ASPproj.Models.Cart", "cart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("Cart_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ASPproj.Models.Item", "item")
+                        .WithMany()
+                        .HasForeignKey("Item_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("cart");
+
+                    b.Navigation("item");
+                });
+
+            modelBuilder.Entity("ASPproj.Models.Order", b =>
+                {
+                    b.HasOne("ASPproj.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("ASPproj.Models.Order_item", b =>
+                {
+                    b.HasOne("ASPproj.Models.Item", "item")
+                        .WithMany()
+                        .HasForeignKey("Item_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ASPproj.Models.Order", "order")
+                        .WithMany()
+                        .HasForeignKey("Order_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("item");
+
+                    b.Navigation("order");
+                });
+
+            modelBuilder.Entity("ASPproj.Models.Cart", b =>
+                {
+                    b.Navigation("CartItems");
                 });
 #pragma warning restore 612, 618
         }
